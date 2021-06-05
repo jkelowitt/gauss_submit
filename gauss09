@@ -86,8 +86,20 @@ Time: {2}:{3}:00
 print(ready)
 status = input("Response (y/n):")
 
-###Actual Submission###
+# Actual Submission
 if status == "y":
-    os.system("sbatch {}.sh".format(options[5]))
-else:
+    for file in files:
+        filename = file[:-4]  # Without ".com"
+
+        # Make the formatted shell script
+        submit = shfile.format(cpus, mem, hours, minutes, test, filename)
+
+        # Writing to .sh template
+        with open(f'{filename}.sh', 'w') as SH:
+            SH.write(submit)
+
+        # Submitting to bash
+        os.system(f"sbatch {filename}.sh")
+
+else:  # Fail safe, if ANYTHING other than 'y' is entered, cancel the operation.
     print("The Job Was Not Submitted")
