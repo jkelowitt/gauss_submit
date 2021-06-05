@@ -63,8 +63,7 @@ def read_input(items):
 
 cpus, mem, hours, minutes, test = read_input(INPUT)
 
-###Finding the input file in the directory###
-FILES = [i[:i.find('.')] for i in os.listdir(os.getcwd()) if i.endswith(".com")]
+test = "#SBATCH --qos=test" if test else ""
 
 # Finding the input file in the directory
 files = glob("*.com")
