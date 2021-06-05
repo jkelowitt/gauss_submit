@@ -68,20 +68,16 @@ test = "#SBATCH --qos=test" if test else ""
 # Finding the input file in the directory
 files = glob("*.com")
 
-submit = shfile.format(*options)
-
-###Writing to .sh template###
-with open('{}.sh'.format(options[5]), 'w') as SH:
-    SH.write(submit)
-
-###Prompt for submission###
-ready = ("""
+# Prompt for submission
+ready = (f"""
 Are you ready to submit these jobs?: 
 ----------------------------
-CPUS: {0}
-Memory: {1}
-Time: {2}:{3}:00
-----------------------------""").format(*options)
+CPUS: {cpus}
+Memory: {mem}
+Time: {hours}:{minutes}:00
+File Count: {len(files)}
+----------------------------""")
+
 print(ready)
 status = input("Response (y/n):")
 
