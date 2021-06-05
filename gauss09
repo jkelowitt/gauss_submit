@@ -11,6 +11,7 @@ Gauss09 file submission script maker
 """
 
 import os
+from glob import glob
 from sys import argv
 
 shfile = """#!/bin/bash
@@ -70,9 +71,8 @@ if options[-1] == True:
 ###Finding the input file in the directory###
 FILES = [i[:i.find('.')] for i in os.listdir(os.getcwd()) if i.endswith(".com")]
 
-###Adding the file name to the options list###
-options[-1] = test
-options += [FILES[0]]
+# Finding the input file in the directory
+files = glob("*.com")
 
 submit = shfile.format(*options)
 
