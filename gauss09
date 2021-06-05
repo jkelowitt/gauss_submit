@@ -51,22 +51,17 @@ exit EXIT_CODE=$?
 INPUT = [i for i in argv[1:]]
 
 
-def ReadInput(INPUT):
-    test = False
-    if INPUT[-1] == "-t":
-        test = True
-    cpus = str(INPUT[0])
-    mem = str(INPUT[1])
-    hours = str(INPUT[2]).zfill(2)
-    minutes = str(INPUT[3]).zfill(2)
+def read_input(items):
+    """Converts argv into the appropriate variables for use."""
+    test = (items[-1] == "-t")
+    cpus = str(items[0])
+    mem = str(items[1])
+    hours = str(items[2]).zfill(2)
+    minutes = str(items[3]).zfill(2)
     return cpus, mem, hours, minutes, test
 
 
-options = list(ReadInput(INPUT))
-if options[-1] == False:
-    test = ""
-if options[-1] == True:
-    test = "#SBATCH --qos=test"
+cpus, mem, hours, minutes, test = read_input(INPUT)
 
 ###Finding the input file in the directory###
 FILES = [i[:i.find('.')] for i in os.listdir(os.getcwd()) if i.endswith(".com")]
