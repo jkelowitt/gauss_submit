@@ -12,6 +12,7 @@ Gauss09 file submission script maker
 
 import os
 from glob import glob
+from subprocess import PIPE, Popen
 from sys import argv
 from time import sleep
 
@@ -115,29 +116,26 @@ begin = yes_no("Begin Submissions")
 if begin:
     for i, file in enumerate(files):
 
-        if limit and (count_limit // (i + 1) == 0):
-            hours_in_seconds = int(hours) * 3600
-            min_in_sec = int(minutes) * 60
-            seconds = hours_in_seconds + min_in_sec
+        # Use python to execute a bash shell command and extract the number of active jobs
+        cmd = "squeue --me -h -t pending,running -r | wc -l"
+        p1 = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+        current_job_count, err = p1.communicate()
 
-            print(f"Waiting for {int(hours)} hours, and {int(minutes) + 1} minutes.")
+        if int(current_job_count) > count_limit:
+            sleep(10)
 
-            # Wait out the wall time
-            sleep(hours_in_seconds + min_in_sec + 60)
+        else:
+            filename = file[:-4]  # Without ".com"
 
-        filename = file[:-4]  # Without ".com"
+            # Make the formatted shell script
+            submit = shfile.format(cpus, mem, hours, minutes, test, filename)
 
-        # Make the formatted shell script
-        submit = shfile.format(cpus, mem, hours, minutes, test, filename)
+            # Writing to .sh template
+            with open(f'{filename}.sh', 'w') as SH:
+                SH.write(submit)
 
-        # Writing to .sh template
-        with open(f'{filename}.sh', 'w') as SH:
-            SH.write(submit)
-
-        # Submitting to bash
-        os.system(f"sbatch {filename}.sh")
-
-
+            # Submitting to bash
+            os.system(f"sbatch {filename}.sh")
 
 else:
-    print("The Job Was Not Submitted")
+    print("The Jobs Were Not Submitted")
