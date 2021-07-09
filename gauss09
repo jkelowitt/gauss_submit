@@ -112,7 +112,7 @@ if len(files) >= 5000:
 begin = yes_no("Begin Submissions")
 
 # Actual Submission
-if begin == "y":
+if begin:
     for i, file in enumerate(files):
         filename = file[:-4]  # Without ".com"
 
