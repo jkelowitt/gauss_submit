@@ -99,6 +99,23 @@ File Count: {len(files)}
 
 print(ready)
 
+# Get all of the input files which already have corresponding shell files
+# If there is a shell file and a log file, it has most likely been submitted before.
+dupes = [a for a in [f if
+                     (os.path.exists(f"{f[:-4]}.sh") and os.path.exists(f"{f[:-4]}.log"))
+                     else None for f in files]
+         if a is not None]
+
+overwrite = True
+if dupes:
+    print("You have some files which already have outputs.")
+    skip = yes_no("Would you like to skip over submitting these files")
+
+# If we aren't overwriting the files, don't queue them to be overwritten
+if skip:
+    for item in dupes:
+        files.remove(item)
+
 if len(files) >= 5000:
     print("You have a lot of files. You may get rate limited.")
     print("Would you like to use a delayed submission?")
