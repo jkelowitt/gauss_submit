@@ -114,6 +114,17 @@ begin = yes_no("Begin Submissions")
 # Actual Submission
 if begin:
     for i, file in enumerate(files):
+
+        if limit and (count_limit // (i + 1) == 0):
+            hours_in_seconds = int(hours) * 3600
+            min_in_sec = int(minutes) * 60
+            seconds = hours_in_seconds + min_in_sec
+
+            print(f"Waiting for {int(hours)} hours, and {int(minutes) + 1} minutes.")
+
+            # Wait out the wall time
+            sleep(hours_in_seconds + min_in_sec + 60)
+
         filename = file[:-4]  # Without ".com"
 
         # Make the formatted shell script
@@ -126,15 +137,7 @@ if begin:
         # Submitting to bash
         os.system(f"sbatch {filename}.sh")
 
-        if limit and (count_limit // (i + 1) == 0):
-            hours_in_seconds = int(hours) * 3600
-            min_in_sec = int(minutes) * 60
-            seconds = hours_in_seconds + min_in_sec
 
-            print(f"Waiting for {int(hours)} hours, and {int(minutes) + 1} minutes.")
-
-            # Wait out the wall time
-            sleep(hours_in_seconds + min_in_sec + 60)
 
 else:
     print("The Job Was Not Submitted")
