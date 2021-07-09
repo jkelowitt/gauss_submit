@@ -116,6 +116,16 @@ if skip:
     for item in dupes:
         files.remove(item)
 
+    ready = (f"""
+    Submission Summary: 
+    ----------------------------
+    CPUS: {cpus}
+    Memory: {mem}
+    Time: {hours}:{minutes}:00
+    File Count: {len(files)}
+    ----------------------------""")
+    print(ready)
+
 if len(files) >= 5000:
     print("\nYou have a lot of files. You may get rate limited.")
     print("Would you like to use a delayed submission?")
