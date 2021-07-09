@@ -89,13 +89,13 @@ files.sort()
 
 # Prompt for submission
 ready = (f"""
-Are you ready to submit these jobs?: 
+Submission Summary: 
 ----------------------------
 CPUS: {cpus}
 Memory: {mem}
 Time: {hours}:{minutes}:00
 File Count: {len(files)}
-----------------------------\n""")
+----------------------------""")
 
 print(ready)
 
@@ -108,7 +108,7 @@ dupes = [a for a in [f if
 
 skip = True
 if dupes:
-    print("You have some files which already have outputs.")
+    print("\nYou have some files which already have outputs.")
     skip = yes_no("Would you like to skip over submitting these files")
 
 # If we aren't overwriting the files, don't queue them to be overwritten
@@ -117,22 +117,20 @@ if skip:
         files.remove(item)
 
 if len(files) >= 5000:
-    print("You have a lot of files. You may get rate limited.")
+    print("\nYou have a lot of files. You may get rate limited.")
     print("Would you like to use a delayed submission?")
-    print("This will submit up to a specified number of jobs before waiting out the wall time")
-    print(" so that the number of active jobs never reaches the specified limit.")
-    print("You will also need to keep your terminal open the whole time.")
-    limit = yes_no("")
+    print("This keep the number of active jobs below your requested limit, but")
+    print("\tyou will need to keep your terminal open the whole time.")
+    limit = yes_no("Use delayed submission")
 
     if limit:
         count_limit = int(input("How many jobs do you want active at the same time: "))
 
-begin = yes_no("Begin Submissions")
+begin = yes_no("\nBegin Submissions")
 
 # Actual Submission
 if begin:
     for i, file in enumerate(files):
-
         # Use python to execute a bash shell command and extract the number of active jobs
         cmd = "squeue --me -h -t pending,running -r | wc -l"
         p1 = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
