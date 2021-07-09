@@ -84,6 +84,7 @@ test = "#SBATCH --qos=test" if test else ""
 
 # Finding the input file in the directory
 files = glob("*.com")
+files.sort()
 
 # Prompt for submission
 ready = (f"""
@@ -111,8 +112,8 @@ if len(files) >= 5000:
 begin = yes_no("Begin Submissions")
 
 # Actual Submission
-if status == "y":
-    for file in files:
+if begin == "y":
+    for i, file in enumerate(files):
         filename = file[:-4]  # Without ".com"
 
         # Make the formatted shell script
