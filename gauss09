@@ -85,7 +85,13 @@ test = "#SBATCH --qos=test" if test else ""
 
 # Finding the input file in the directory
 files = glob("*.com")
-files.sort()
+
+try:
+    # Sort by the molecule name, then the number attached to the molecule name
+    files.sort(key=lambda x: (x[:x.rfind("_") - 1], int(x[x.rfind("_") + 1:-4])))
+except ValueError:
+    # If it doesn't have an underscore, just sort by the whole file name
+    files.sort()
 
 # Prompt for submission
 ready = (f"""
@@ -142,9 +148,9 @@ begin = yes_no("\nBegin Submissions")
 if begin:
     for i, file in enumerate(files):
         # Use python to execute a bash shell command and extract the number of active jobs
-        cmd = "squeue --me -h -t pending,running -r | wc -l"
-        p1 = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-        current_job_count, err = p1.communicate()
+        cmd = "squeue --me -h -t pending,running -r | wc -l"  # Returns the job queue size
+        p1 = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)  # Submit the cmd
+        current_job_count, err = p1.communicate()  # Shell -> Python
 
         if int(current_job_count) > count_limit:
             sleep(10)
